@@ -2,7 +2,30 @@ import { useState } from 'react'
 
 const Button = (props) => <button onClick={props.onClick}>{props.text}</button>
 
-const Stat = (props) => <div>{props.text} {props.count} {props.unit}</div>
+const StatLine = ({text, value, unit}) => {
+  // Automatically round the value to one decimal place
+  const rounded = Math.round(value * 10) / 10
+  
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{rounded} {unit}</td>
+    </tr>
+  )
+}
+
+const Stats = (props) => props.total ? <>
+    <table>
+      <tbody>
+        <StatLine text="good" value={props.good} />
+        <StatLine text="neutral" value={props.neutral} />
+        <StatLine text="bad" value={props.bad} />
+        <StatLine text="all" value={props.total} />
+        <StatLine text="average" value={props.score/props.total} />
+        <StatLine text="positive" value={(props.good/props.total)*100} unit="%" />
+      </tbody>
+    </table>
+  </> : <p>No feedback given</p>
 
 const App = () => {
   // Each button will use its own state
@@ -22,12 +45,7 @@ const App = () => {
       <Button text="neutral" onClick={increment(neutral, setNeutral)} />
       <Button text="bad" onClick={increment(bad, setBad)} />
       <h1>statistics</h1>
-      <Stat text="good" count={good} />
-      <Stat text="neutral" count={neutral} />
-      <Stat text="bad" count={bad} />
-      <Stat text="all" count={total} />
-      <Stat text="average" count={score/total} />
-      <Stat text="positive" count={(good/total)*100} unit="%" />
+      <Stats good={good} neutral={neutral} bad={bad} score={score} total={total} />
     </div>
   )
 }
