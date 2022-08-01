@@ -6,7 +6,17 @@ const VoteCounter = ({selected, votes}) => {
     // Return 'has 1 vote' if voteCount is 1, else 'has n votes' 
     <p>Has {voteCount} {(voteCount === 1) ? 'vote' : 'votes'}</p>
   )
-} 
+}
+
+const MostPopularAnecdote = ({anecdotes, votes}) => {
+  const largestIndex = Object.keys(votes).reduce((max, current) => votes[current] > votes[max] ? current : max, 0)
+  return (
+    <>
+      <p>{anecdotes[largestIndex]}</p>
+      <VoteCounter selected={largestIndex} votes={votes} />
+    </>
+  )
+}
 
 const App = () => {
   const anecdotes = [
@@ -36,10 +46,13 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
       <VoteCounter selected={selected} votes={votes} />
       <button onClick={voteForAnecdote}>vote</button>
       <button onClick={selectRandomAnecdote}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <MostPopularAnecdote anecdotes={anecdotes} votes={votes} />
     </div>
   )
 }
