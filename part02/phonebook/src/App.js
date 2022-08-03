@@ -47,15 +47,23 @@ const App = () => {
 
   const newContactHandler = e => {
     e.preventDefault()
-    if (persons.map(p => p.name).includes(newContact.name)) {
-      alert(`${newContact.name} is already added to the phonebook`)
+    const existing = persons.find(person => person.name === newContact.name)
+    if (existing) {
+      if (window.confirm(`${newContact.name} is already added to the phonebook. Replace the old number with a new one?`)) {
+        const newData = {...existing, number: newContact.number}
+        contactService
+          .update(existing.id, newData)
+          .then(data => setPersons(persons.map(person => person.id === newData.id ? newData : person)))
+        setNewContact({ name: '', number: '' })
+      } else {
+        setNewContact({ name: '', number: '' })
+      }
+    } else {
+      contactService
+        .create(newContact)
+        .then(data => setPersons(persons.concat(data)))
       setNewContact({ name: '', number: '' })
-      return
     }
-    contactService
-      .create(newContact)
-      .then(data => setPersons(persons.concat(data)))
-    setNewContact({ name: '', number: '' })
   }
 
   const removeContactHandler = person => {
