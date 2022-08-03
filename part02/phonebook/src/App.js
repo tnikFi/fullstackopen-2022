@@ -52,7 +52,9 @@ const App = () => {
       setNewContact({ name: '', number: '' })
       return
     }
-    setPersons(persons.concat(newContact))
+    contactService
+      .create(newContact)
+      .then(data => setPersons(persons.concat(data)))
     setNewContact({ name: '', number: '' })
   }
 
