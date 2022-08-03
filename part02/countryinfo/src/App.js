@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Country from './Country'
+import Country from './components/Country'
 import axios from 'axios'
 
 const INFO_SOURCE = 'https://restcountries.com/v3.1/all'
