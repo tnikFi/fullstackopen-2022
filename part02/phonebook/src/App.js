@@ -2,6 +2,30 @@ import { useState } from 'react'
 
 const Person = ({ person }) => <p>{person.name} {person.number}</p>
 
+const Contacts = ({ persons, filter }) => <>
+  <h2>Numbers</h2>
+  {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => <Person person={person} key={person.name} />)}
+</>
+
+const Filter = ({ filter, filterHandler }) => <div>
+  filter shown with <input value={filter} onChange={filterHandler} />
+</div>
+
+const NewContactForm = ({persons, newContact, newContactHandler, nameHandler, numberHandler}) => <>
+  <h2>Add a new</h2>
+  <form onSubmit={newContactHandler}>
+    <div>
+      name: <input value={newContact.name} onChange={nameHandler} />
+    </div>
+    <div>
+      number: <input value={newContact.number} onChange={numberHandler} />
+    </div>
+    <div>
+      <button type='submit'>add</button>
+    </div>
+  </form>
+</>
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -41,23 +65,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-        <div>
-          filter shown with <input value={filter} onChange={filterHandler} />
-        </div>
-      <h2>Add a new</h2>
-      <form onSubmit={newContactHandler}>
-        <div>
-          name: <input value={newContact.name} onChange={nameInputHandler} />
-        </div>
-        <div>
-          number: <input value={newContact.number} onChange={numberInputHandler} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => <Person person={person} key={person.name} />)}
+      <Filter filter={filter} filterHandler={filterHandler} />
+      <NewContactForm persons={persons} newContact={newContact} newContactHandler={newContactHandler} nameHandler={nameInputHandler} numberHandler={numberInputHandler} />
+      <Contacts persons={persons} filter={filter} />
     </div>
   )
 
