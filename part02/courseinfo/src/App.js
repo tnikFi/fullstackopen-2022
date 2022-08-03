@@ -10,7 +10,7 @@ const Content = ({course}) => {
   )
 }
 
-const Total = props => <p>Number of exercises {props.course.parts[0].exercises + props.course.parts[1].exercises + props.course.parts[2].exercises}</p>;
+const Total = ({course}) => <p>Number of exercises {course.parts.reduce((previousSum, current) => previousSum + current.exercises, 0)}</p>;
 
 const Course = ({course}) => <>
   <Header course={course}/>
