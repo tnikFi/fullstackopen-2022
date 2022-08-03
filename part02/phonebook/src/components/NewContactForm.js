@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import contactService from '../services/contacts'
 
-const NewContactForm = ({persons, setPersons}) => {
+const NewContactForm = ({persons, setPersons, setAlert}) => {
     
     const [newContact, setNewContact] = useState({ name: '', number: '' })
 
@@ -19,16 +19,22 @@ const NewContactForm = ({persons, setPersons}) => {
             if (window.confirm(`${newContact.name} is already added to the phonebook. Replace the old number with a new one?`)) {
                 const newData = {...existing, number: newContact.number}
                 contactService
-                .update(existing.id, newData)
-                .then(data => setPersons(persons.map(person => person.id === newData.id ? newData : person)))
+                    .update(existing.id, newData)
+                    .then(data => setPersons(persons.map(person => person.id === data.id ? data : person)))
+                    .catch(error => {
+                        setAlert({text: `Information of ${newData.name} has already been removed from the server`, color: 'red'})
+                        setPersons(persons.filter(person => person !== existing))
+                    })
+                setAlert({text: `Updated ${newData.name}`, color: 'green'})
                 setNewContact({ name: '', number: '' })
             } else {
                 setNewContact({ name: '', number: '' })
             }
         } else {
             contactService
-            .create(newContact)
-            .then(data => setPersons(persons.concat(data)))
+                .create(newContact)
+                .then(data => setPersons(persons.concat(data)))
+            setAlert({text: `Added ${newContact.name}`, color: 'green'})
             setNewContact({ name: '', number: '' })
         }
     }
