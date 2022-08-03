@@ -66,7 +66,13 @@ const Country = ({ country }) => {
   )
 }
 
-const CountryList = ({ countries }) => {
+const CountryListEntry = ({ country, searchSetter }) => {
+  return <>
+    <p>{country.name.common} <button onClick={() => searchSetter(country.name.common)}>show</button></p>
+  </>
+}
+
+const CountryList = ({ countries, searchSetter }) => {
   const count = countries.length
 
   switch (count) {
@@ -76,7 +82,7 @@ const CountryList = ({ countries }) => {
       return <Country country={countries[0]} />
     default:
       return (count <= 10)
-        ? <>{countries.map(country => <p key={country.cca2}>{country.name.common}</p>)}</>
+        ? <>{countries.map(country => <CountryListEntry key={country.cca2} country={country} searchSetter={searchSetter} />)}</>
         : <p>Too many matches, use a more specific filter</p>
   }
 }
@@ -100,7 +106,7 @@ function App() {
   return (
     <div>
       find countries <input value={search} onChange={searchHandler} />
-      <CountryList countries={countries.filter(country => country.name.common.toLowerCase().includes(search.toLowerCase()))} />
+      <CountryList countries={countries.filter(country => country.name.common.toLowerCase().includes(search.toLowerCase()))} searchSetter={setSearch} />
     </div>
   );
 }
