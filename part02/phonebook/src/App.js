@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import contactService from './services/contacts'
 
-const Person = ({ person }) => <p>{person.name} {person.number}</p>
+const Person = ({ person, onRemove }) => <p>{person.name} {person.number} <button onClick={() => onRemove(person)}>delete</button></p>
 
-const Contacts = ({ persons, filter }) => <>
+const Contacts = ({ persons, filter, onRemove }) => <>
   <h2>Numbers</h2>
-  {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => <Person person={person} key={person.name} />)}
+  {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => <Person person={person} key={person.name} onRemove={onRemove} />)}
 </>
 
 const Filter = ({ filter, filterHandler }) => <div>
@@ -58,6 +58,14 @@ const App = () => {
     setNewContact({ name: '', number: '' })
   }
 
+  const removeContactHandler = person => {
+    if (!window.confirm(`Delete ${person.name}?`)) return;
+    contactService
+      .remove(person.id)
+      .then(data => console.log(data))
+    setPersons(persons.filter(p => p.id !== person.id))
+  }
+
   const filterHandler = e => {
     e.preventDefault()
     setFilter(e.target.value)
@@ -68,7 +76,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filter={filter} filterHandler={filterHandler} />
       <NewContactForm persons={persons} newContact={newContact} newContactHandler={newContactHandler} nameHandler={nameInputHandler} numberHandler={numberInputHandler} />
-      <Contacts persons={persons} filter={filter} />
+      <Contacts persons={persons} filter={filter} onRemove={removeContactHandler} />
     </div>
   )
 
