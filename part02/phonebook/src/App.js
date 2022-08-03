@@ -1,35 +1,46 @@
 import { useState } from 'react'
 
-const Person = ({ person }) => <p>{person.name}</p>
+const Person = ({ person }) => <p>{person.name} {person.number}</p>
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
-  const [newName, setNewName] = useState('')
+    {
+      name: 'Arto Hellas',
+      number: '040-1231244'
+    }
+  ])
+  const [newContact, setNewContact] = useState({ name: '', number: '' })
 
-  const nameInputHandler = (e) => {
+  const nameInputHandler = e => {
     e.preventDefault()
-    setNewName(e.target.value)
+    setNewContact({name: e.target.value, number: newContact.number})
   }
 
-  const newNameHandler = e => {
+  const numberInputHandler = e => {
     e.preventDefault()
-    if (persons.map(p => p.name).includes(newName)) {
-      alert(`${newName} is already added to the phonebook`)
-      setNewName('')
+    setNewContact({name: newContact.name, number: e.target.value})
+  }
+
+  const newContactHandler = e => {
+    e.preventDefault()
+    if (persons.map(p => p.name).includes(newContact.name)) {
+      alert(`${newContact.name} is already added to the phonebook`)
+      setNewContact({ name: '', number: '' })
       return
     }
-    setPersons(persons.concat({ name: newName }))
-    setNewName('')
+    setPersons(persons.concat(newContact))
+    setNewContact({ name: '', number: '' })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={newNameHandler}>
+      <form onSubmit={newContactHandler}>
         <div>
-          name: <input value={newName} onChange={nameInputHandler} />
+          name: <input value={newContact.name} onChange={nameInputHandler} />
+        </div>
+        <div>
+          number: <input value={newContact.number} onChange={numberInputHandler} />
         </div>
         <div>
           <button type="submit">add</button>
