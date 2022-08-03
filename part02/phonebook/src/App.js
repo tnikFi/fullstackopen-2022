@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import contactService from './services/contacts'
 
 const Person = ({ person }) => <p>{person.name} {person.number}</p>
 
@@ -33,14 +33,7 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   // Get the initial contact info from the server
-  useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log(response.data)
-        setPersons(response.data)
-      })
-  }, [])
+  useEffect(() => {contactService.getAll().then(data => setPersons(data))}, [])
 
   const nameInputHandler = e => {
     e.preventDefault()
