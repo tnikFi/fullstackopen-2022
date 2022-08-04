@@ -22,8 +22,16 @@ const NewContactForm = ({persons, setPersons, setAlert}) => {
                     .update(existing.id, newData)
                     .then(data => setPersons(persons.map(person => person.id === data.id ? data : person)))
                     .catch(error => {
-                        setAlert({text: `Information of ${newData.name} has already been removed from the server`, color: 'red'})
-                        setPersons(persons.filter(person => person !== existing))
+                        const response = error.response
+
+                        if (response) {
+                            const message = error.response.data.error
+                            const status = error.response.status
+                            setAlert({text: `${message}`, color: 'red'})
+                        } else {
+                            setAlert({text: `Information of ${newData.name} has already been removed from the server`, color: 'red'})
+                            setPersons(persons.filter(person => person !== existing))
+                        }
                     })
                 setAlert({text: `Updated ${newData.name}`, color: 'green'})
                 setNewContact({ name: '', number: '' })
@@ -33,8 +41,13 @@ const NewContactForm = ({persons, setPersons, setAlert}) => {
         } else {
             contactService
                 .create(newContact)
-                .then(data => setPersons(persons.concat(data)))
-            setAlert({text: `Added ${newContact.name}`, color: 'green'})
+                .then(data => {
+                    setPersons(persons.concat(data))
+                    setAlert({text: `Added ${newContact.name}`, color: 'green'})
+                })
+                .catch(error => {
+                    setAlert({text: `${error.response.data.error}`, color: 'red'})
+                })
             setNewContact({ name: '', number: '' })
         }
     }
